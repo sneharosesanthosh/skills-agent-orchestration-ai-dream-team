@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Project Pulse</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <header class="topbar">
+        <div class="eyebrow">Team visibility</div>
+        <h1>Project Pulse</h1>
+        <p>Track project health, owner momentum, risk, and recent delivery updates across the portfolio.</p>
+      </header>
+
+      <main class="dashboard" aria-label="Project Pulse dashboard">
+        <section class="summary-panel" aria-label="Portfolio summary">
+          <div class="summary-card">
+            <span class="label">Active</span>
+            <strong id="active-count">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="label">At risk</span>
+            <strong id="risk-count">0</strong>
+          </div>
+          <div class="summary-card">
+            <span class="label">Priority focus</span>
+            <strong id="focus-count">0</strong>
+          </div>
+        </section>
+
+        <section id="project-grid" class="project-grid" aria-live="polite"></section>
+      </main>
+    </div>
+
+    <script>
+      const projectGrid = document.getElementById('project-grid');
+      const activeCount = document.getElementById('active-count');
+      const riskCount = document.getElementById('risk-count');
+      const focusCount = document.getElementById('focus-count');
+
+      const escapeHtml = (value) => {
+        return String(value)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#039;');
+      };
+
+      const statusClass = (status) => {
+        if (!status) return 'on-track';
+        const normalized = status.toLowerCase();
+        if (normalized.includes('risk')) return 'at-risk';
+        if (normalized.includes('complete')) return 'complete';
+        return 'on-track';
+      };
+
+      const priorityClass = (priority) => {
+        if (!priority) return 'priority-medium';
+        const normalized = priority.toLowerCase();
+        if (normalized === 'high') return 'priority-high';
+        if (normalized === 'low') return 'priority-low';
+        return 'priority-medium';
+      };
+
+      function renderProjects(projects) {
+        if (!projects.length) {
+          projectGrid.innerHTML = '<div class="empty-state">No projects currently tracked.</div>';
+          return;
+        }
+
+        projectGrid.innerHTML = projects
+          .map((project) => {
+            const cardClass = statusClass(project.status);
+            const priorityPillClass = priorityClass(project.priority);
+
+            return `
+              <article class="project-card ${cardClass}" aria-label="${escapeHtml(project.name)} project card">
+                <div class="card-header">
+                  <div>
+                    <p class="project-owner">${escapeHtml(project.owner)}</p>
+                    <h2>${escapeHtml(project.name)}</h2>
+                  </div>
+                  <span class="status-badge">${escapeHtml(project.status)}</span>
+                </div>
+
+                <div>
+                  <p class="activity-label">Recent activity</p>
+                  <p class="activity-text">${escapeHtml(project.recentActivity)}</p>
+                </div>
+
+                <div class="card-footer">
+                  <span class="priority-label">Priority</span>
+                  <span class="priority-pill ${priorityPillClass}">${escapeHtml(project.priority)}</span>
+                </div>
+              </article>
+            `;
+          })
+          .join('');
+      }
+
+      async function loadProjects() {
+        try {
+          const response = await fetch('project-data.json');
+          if (!response.ok) {
+            throw new Error(`Failed to fetch project data: ${response.status}`);
+          }
+
+          const data = await response.json();
+          const projects = Array.isArray(data.projects) ? data.projects : [];
+
+          renderProjects(projects);
+          activeCount.textContent = projects.filter((project) => project.status === 'On track').length;
+          riskCount.textContent = projects.filter((project) => project.status === 'At risk').length;
+          focusCount.textContent = projects.filter((project) => project.priority === 'High').length;
+        } catch (error) {
+          projectGrid.innerHTML = '<div class="error-banner">Unable to load project data. Please check the JSON source.</div>';
+          console.error(error);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', loadProjects);
+    </script>
+  </body>
+</html>

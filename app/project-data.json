@@ -1,0 +1,32 @@
+{
+  "projects": [
+    {
+      "name": "LaunchPad CRM",
+      "owner": "Maya Chen",
+      "status": "On track",
+      "recentActivity": "Customer onboarding workflow is 82% complete and onboarding emails are live.",
+      "priority": "High"
+    },
+    {
+      "name": "Atlas Ops",
+      "owner": "Jordan Lee",
+      "status": "At risk",
+      "recentActivity": "A migration dependency is delaying release notes and QA sign-off.",
+      "priority": "High"
+    },
+    {
+      "name": "North Star Docs",
+      "owner": "Priya Nair",
+      "status": "On track",
+      "recentActivity": "Contributor guides were refreshed and the new API references shipped.",
+      "priority": "Medium"
+    },
+    {
+      "name": "Beacon Analytics",
+      "owner": "Ethan Ross",
+      "status": "Complete",
+      "recentActivity": "The final dashboard review passed and the rollout is fully closed out.",
+      "priority": "Low"
+    }
+  ]
+}
