@@ -5,12 +5,12 @@
 Building Mona's Project Pulse dashboard with GitHub Copilot CLI in a Codespace using four specialized agents:
 
 ### 1. **Orchestrator**
-- **Model:** Claude Opus 4.7
+- **Model:** claude-haiku-4.5
 - **Location:** `.github/agents/orchestrator.agent.md`
 - **Responsibility:** Coordinates the Planner, Coder, and Designer agents by breaking down complex requests into tasks, managing dependencies, and verifying integrated results.
 
 ### 2. **Planner**
-- **Model:** Claude Opus 4.7
+- **Model:** claude-haiku-4.5
 - **Location:** `.github/agents/planner.agent.md`
 - **Responsibility:** Creates implementation plans through thorough codebase research, documentation review, edge case identification, and deliverable planning without writing code.
 
